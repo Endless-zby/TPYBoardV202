@@ -11,6 +11,45 @@
 |G14| Trig|
 |G15| Echo|
 |GND|Gnd|
+- 工作原理
+
+(1) 采用IO口Trig触发测距，给最少10us的高电平信号。
+
+(2) 模块自动发送 8 个 40khz 的方波，自动检测是否有信号返回。
+
+(3) 有信号返回，通过 IO 口 Echo 输出一个高电平，高电平持续的时间就是超声波从发射到返回的时间。测试距离=(高电平时间*声速(340M/S))/2。
+
+- 代码实例
+
+```python
+def distance_measurement():
+    # 高电平发送方波 持续20us
+    Trig.value(1)
+    time.sleep_us(20)
+    Trig.value(0)
+    # 侦听Echo串口有无输入高电平 没有的话接着发送方波
+    while Echo.value() == 0:
+        Trig.value(1)
+        time.sleep_us(20)
+        Trig.value(0)
+    # 侦听到Echo电平升高
+    if Echo.value() == 1:
+        # 记录当前时间
+        ts = time.ticks_us()
+
+        while Echo.value() == 1:
+            pass
+        te = time.ticks_us()
+        # 计算得到高电平持续时间 单位：us
+        tc = te - ts
+        # 根据音速计算距离（换算cm）常温常压下 0.0343厘米/微秒
+        distance = (tc * 0.0343) / 2
+        print('Distance:', distance, '(cm)')
+```
+- 误差分析
+> 超声波的传播速度受空气的密度所影响，空气的密度越高则超声波的传播速度就越快，而空气的密度又与温度有着密切的关系
+
+超声波`速度与温度`的关系近似公式为：_C=C0+0.607×T℃ (C0为零度时的声波速度332m/s)_
 
 ###  4、猫砂盆门控制（_舵机_）
 ###  5、猫砂自动清筛（_步进电机_、_带减速器电机_、_滑轨_、_皮带_）

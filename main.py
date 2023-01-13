@@ -11,8 +11,16 @@ import time, math  # 声明用到的类库，尤其是dht的类库
 # 温湿度传感器data串口
 d = dht.DHT11(machine.Pin(5))  # 声明用到类库中的函数，并设置参数
 led_blue = machine.PWM(machine.Pin(2), freq=100)
+# 超声波传感器Echo、Trig定义
+Trig = Pin(5, Pin.OUT)
+Echo = Pin(4, Pin.IN)
+
+
 # USR按键
-sw=pyb.Switch()
+sw = pyb.Switch()
+wlan = network.WLAN(network.STA_IF)  # 设置开发板的网#络模式
+wlan.active(True)  # 打开网络连接
+
 
 # 呼吸灯(利用正余弦函数的周期性变化调节led亮度)
 def respiration_led(led_, time_):
@@ -20,15 +28,6 @@ def respiration_led(led_, time_):
         led_.duty(int(math.sin(i / 10 * math.pi) * 500 + 500))
         time.sleep_ms(time_)
 
-
-def switch():
-    sw_state = sw()
-    if sw_state:
-        print('USR被按下')
-        led_blue.on()
-    else:
-        print('USR松开')
-        led_blue.off()
 
 # oled 显示屏驱动 长128 宽64
 i2c = machine.I2C(-1, sda=machine.Pin(4), scl=machine.Pin(0), freq=100000)
@@ -65,7 +64,7 @@ def http_get(url):  # 定义数据上传的函数
         if data:  # 数据未发送完成，继续发送
             recive = str(data, 'utf8').upper()
             # print(str(data, 'utf8'), end='')
-            if (recive.find('YES') > -1):
+            if recive.find('YES') > -1:
                 print('Send Data OK')
         else:  # 数据发送完成，退出while
             break
@@ -75,8 +74,6 @@ def http_get(url):  # 定义数据上传的函数
 # 网络连接
 def do_connect():  # 定义开发板连接无线网络的函数
     oled_show([('Net connection...', 0, 20)])
-    wlan = network.WLAN(network.STA_IF)  # 设置开发板的网#络模式
-    wlan.active(True)  # 打开网络连接
     if not wlan.isconnected():  # 判断是否有网络连接
         print('connecting to network...')
         wlan.connect('blog-2.4', 'zby123456')  # 设置想要连接的无线名称和密码
@@ -89,6 +86,22 @@ def do_connect():  # 定义开发板连接无线网络的函数
     # oled_text('ip: ', 0, 20)
     # oled_text(wlan.ifconfig()[0], 0, 30)
     print('network config:', wlan.ifconfig())
+
+
+def show_ip():
+    oled_show([('ip: ', 0, 20), (wlan.ifconfig()[0], 0, 40)])
+
+
+def switch():
+    sw_state = sw()
+    if sw_state:
+        print('USR被按下')
+        led_blue.on()
+        show_ip()
+    else:
+        print('USR松开')
+        led_blue.off()
+        oled.fill(0)  # 清屏
 
 
 do_connect()  # 连接无线网络
@@ -111,22 +124,44 @@ udp_send('系统上线！ 时间：' + datetime.now().strftime("%d/%m/%Y %H:%M:%
 
 
 # 温湿度传感器
-def temperature_measure(show_led, send_server):
+def temperature_measure(show_oled, send_server):
     d.measure()  # 调用DHT类库中测量数据的函数
     temp_ = str(d.temperature())  # 读取measure()函数中的温度数据
     hum_ = str(d.humidity())  # 读取measure()函数中的湿度数据
     # print('eg:', temp_, '-', hum_)
-    if show_led:
+    if show_oled:
         # 测量数据oled显示
         oled_show([('temperature: ' + temp_, 0, 10), ('humidity: ' + hum_ + '%', 0, 30), ('dataBy: byzhao', 17, 50)])
-    else:
-        pass
     if send_server:
         # http_get('http://py.byzhao.cn/py/temperature?temperature=' + temp_ + '&humidity=' + hum_ + '')
         bt = '温度：{}℃  ----  湿度：{}%  ---- 当前时间：{}'.format(temp_, hum_, str(time.time()))
         udp_send(bt)
-    else:
-        pass
+
+
+# 测距
+def distance_measurement():
+    # 高电平发送方波 持续20us
+    Trig.value(1)
+    time.sleep_us(20)
+    Trig.value(0)
+    # 侦听Echo串口有无输入高电平 没有的话接着发送方波
+    while Echo.value() == 0:
+        Trig.value(1)
+        time.sleep_us(20)
+        Trig.value(0)
+    # 侦听到Echo电平升高
+    if Echo.value() == 1:
+        # 记录当前时间
+        ts = time.ticks_us()
+
+        while Echo.value() == 1:
+            pass
+        te = time.ticks_us()
+        # 计算得到高电平持续时间 单位：us
+        tc = te - ts
+        # 根据音速计算距离（换算cm）  0.0343厘米/微秒
+        distance = (tc * 0.0343) / 2
+        print('Distance:', distance, '(cm)')
 
 
 # 核心方法
@@ -134,6 +169,7 @@ while True:  # 开始整个代码的大循环
 
     # 检测环境温度、湿度并上报
     temperature_measure(True, True)
+    time.sleep(2)
 
     # 超声波传感器检测门是否打开
 

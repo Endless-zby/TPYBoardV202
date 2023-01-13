@@ -15,6 +15,8 @@ led_blue = machine.PWM(machine.Pin(2), freq=100)
 Trig = Pin(5, Pin.OUT)
 Echo = Pin(4, Pin.IN)
 
+# 标准门距
+door_dist = 1
 
 # USR按键
 sw = pyb.Switch()
@@ -162,19 +164,48 @@ def distance_measurement():
         # 根据音速计算距离（换算cm）  0.0343厘米/微秒
         distance = (tc * 0.0343) / 2
         print('Distance:', distance, '(cm)')
+        return distance
 
+
+def init_door():
+    # 计算当前位置到门的距离 作为基准值，考虑误差 基准值 +-0.5cm属于合理区间
+    dist = distance_measurement()
+    # 修改全局变量door_dist
+    global door_dist
+    door_dist = range(dist - 0.5, dist + 0.5)
+
+
+# 获取基准值范围
+init_door()
 
 # 核心方法
+# 使整个函数应该在一个可控的周期内执行，应该要能调整这个周期的频率   int(math.sin(x * i))  0<i<5
+# 可以将整个代码的执行过程作为一个正弦函数，在波峰对环境温度湿度做采样
+# 在x轴奇数点对舱门状态做判断并计时
+#
 while True:  # 开始整个代码的大循环
 
-    # 检测环境温度、湿度并上报
+    # 检测环境温度、湿度并上报 oled 或者 udp
     temperature_measure(True, True)
-    time.sleep(2)
 
     # 超声波传感器检测门是否打开
+    distance = distance_measurement()
+    if distance in door_dist:
+        oled_show([('舱门状态: 关闭', 0, 40)])
+        # 灯灭
+        led_blue.off()
+    else:
+        oled_show([('舱门状态: 打开', 0, 40)])
+        # 灯亮
+        led_blue.on()
+        time.time_ns()
+    # 计时 胖胖进入猫砂盆的时间
 
-    # 计时
+
+
+
+    # 对胖胖尿尿和拉屎时的空气湿度变化做一个分布图，通过湿度来判断是尿尿还是拉屎
 
     # 计算停留时间并上报
 
-    # 接通继电器换气
+    # 接通继电器用风扇换气

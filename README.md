@@ -74,3 +74,9 @@ def distance_measurement():
 ###  7、远程状态监控（_Lua或Java或python开发_）
 ###  8、无线传输（_板载wifi模块_）
 ###  9、远程控制协议（_客户端加密的UDP协议_）
+
+
+
+### ESP8266引脚图
+
+![ESP8266引脚图](esp8266.png)

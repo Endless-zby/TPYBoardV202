@@ -75,6 +75,10 @@ def distance_measurement():
 ###  7、远程状态监控（_Lua或Java或python开发_）
 ###  8、无线传输（_板载wifi模块_）
 ###  9、远程控制协议（_客户端加密的UDP协议_）
+###  10、减速电机（L298N控制器）  
+> 接线图  
+
+![L298N控制器](resource/20210508141229823.png)
 
 
 
@@ -101,3 +105,7 @@ def distance_measurement():
 > esp8266 填写这个 https://arduino.esp8266.com/stable/package_esp8266com_index.json  
 > esp32 填写这个 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json  
 
+
+
+
+# L298N

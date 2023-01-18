@@ -1,6 +1,7 @@
 # 智能猫砂盆
 
 > TPYBoardV202
+> 开发环境：python
 ###  1、移动检测（_加速度传感器_）
 ###  2、温湿度检测（_温湿度传感器_）
 ###  3、距离检测（_超声波传感器_）
@@ -79,4 +80,24 @@ def distance_measurement():
 
 ### ESP8266引脚图
 
-![ESP8266引脚图](esp8266.png)
+![ESP8266引脚图](resource/esp8266.png)
+
+
+
+# PushDeer
+> `PushDeer`可以将消息推送到各种支持MQTT协议的智能设备。  
+> DeerESP 是 PushDeer 在 IOT 方向的扩展项目，它是一个基于 ESP8266/ESP32 芯片的消息设备方案。  
+> 开发环境：arduino  
+> DIE下载：https://www.arduino.cc/en/software  
+> 1.44TFT资料：http://www.lcdwiki.com/zh/1.44inch_SPI_Arduino_Module_Black_SKU:MAR1442  
+
+### ESP8266与1.44TFT
+
+![ESP8266引脚图](resource/esp8266+1.44.png)
+
+### 开发流程
+
+- 由于我们使用的8266并没有内置到 ardunio IDE 中，我们还需要进行一下配置，在设置界面填上附加开发板管理器网址：
+> esp8266 填写这个 https://arduino.esp8266.com/stable/package_esp8266com_index.json  
+> esp32 填写这个 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json  
+

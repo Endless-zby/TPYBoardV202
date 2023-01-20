@@ -1,4 +1,3 @@
-import pyb
 import dht
 import machine
 import network
@@ -18,8 +17,7 @@ Echo = Pin(4, Pin.IN)
 # 标准门距
 door_dist = 1
 
-# USR按键
-sw = pyb.Switch()
+
 wlan = network.WLAN(network.STA_IF)  # 设置开发板的网#络模式
 wlan.active(True)  # 打开网络连接
 
@@ -93,17 +91,6 @@ def do_connect():  # 定义开发板连接无线网络的函数
 def show_ip():
     oled_show([('ip: ', 0, 20), (wlan.ifconfig()[0], 0, 40)])
 
-
-def switch():
-    sw_state = sw()
-    if sw_state:
-        print('USR被按下')
-        led_blue.on()
-        show_ip()
-    else:
-        print('USR松开')
-        led_blue.off()
-        oled.fill(0)  # 清屏
 
 
 do_connect()  # 连接无线网络

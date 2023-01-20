@@ -85,6 +85,7 @@ def distance_measurement():
 ### ESP8266引脚图
 
 ![ESP8266引脚图](resource/esp8266.png)
+![ESP8266引脚图](resource/a74078c888a347c2b69f57c4caa0e482.jpg)
 
 
 

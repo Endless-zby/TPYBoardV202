@@ -6,20 +6,16 @@ import network
 import time, math  # 声明用到的类库，尤其是dht的类库
 from machine import Pin, I2C
 
-
-
 # 温湿度传感器data串口
 d = dht.DHT11(machine.Pin(14))  # 声明用到类库中的函数，并设置参数
 
-
+servo = machine.PWM(machine.Pin(15), freq=50)
 i2c = I2C(scl=Pin(5), sda=Pin(4))
 oled = SSD1306_I2C(128, 64, i2c)
 
-
 # 超声波传感器Echo、Trig定义
-# Trig = Pin(6, Pin.OUT)
-# Echo = Pin(7, Pin.IN)
-
+Trig = Pin(12, Pin.OUT)
+Echo = Pin(13, Pin.IN)
 
 wlan = network.WLAN(network.STA_IF)  # 设置开发板的网#络模式
 wlan.active(True)  # 打开网络连接
@@ -36,6 +32,7 @@ def oled_show(key):
         y = ss[2]
         oled.text(ele, x, y)
     oled.show()
+
 
 # 网络连接
 def do_connect():  # 定义开发板连接无线网络的函数
@@ -70,19 +67,36 @@ def udp_send(msg):
     client_socket.sendto(bytes(msg, 'utf-8'), server_address)
 
 
-# 温湿度传感器
+def sg90(du):
+    t1 = 0.5 + 2 / 180 * du  # 范围2ms 角度180度 起始0.5ms
+    pulse = int(t1 / 20 * 1023)
+    print('移动的角度:', du, pulse)
+
+    # servo.duty(77)
+    servo.duty(pulse)  # 舵机角度的设定
+    print('eg:', pulse)
+
+
+# 温湿度传感器和距离传感器
 def temperature_measure(show_oled, send_server):
     d.measure()  # 调用DHT类库中测量数据的函数
     temp_ = str(d.temperature())  # 读取measure()函数中的温度数据
     hum_ = str(d.humidity())  # 读取measure()函数中的湿度数据
+    distance = distance_measurement()
     # print('eg:', temp_, '-', hum_)
     if show_oled:
         # 测量数据oled显示
         oled_show([('temperature: ' + temp_, 0, 10), ('humidity: ' + hum_ + '%', 0, 30), ('dataBy: byzhao', 17, 50)])
     if send_server:
         # http_get('http://py.byzhao.cn/py/temperature?temperature=' + temp_ + '&humidity=' + hum_ + '')
-        bt = '温度：{}℃  ----  湿度：{}%  ---- 当前时间：{}'.format(temp_, hum_, str(time.time()))
+        # bt = '温度：{}℃  ----  湿度：{}%  ---- 当前时间：{}'.format(temp_, hum_, str(time.time()))
+        bt = '{"temperature":' + temp_ + ',"humidity":' + hum_ + ',"distance":' + str(distance) + '}'
         udp_send(bt)
+    if d.humidity() < 40:
+        sg90(180)
+    else:
+        sg90(0)
+
 
 # 测距
 def distance_measurement():
@@ -108,14 +122,16 @@ def distance_measurement():
         # 根据音速计算距离（换算cm）  0.0343厘米/微秒
         distance = (tc * 0.0343) / 2
         print('Distance:', distance, '(cm)')
-        oled_show([('measurement: ' + distance, 0, 20)])
+        # oled_show([('measurement: ' + distance, 0, 20)])
+        return distance
+        # bt = '测距数据：{}（cm）'.format(distance)
+        # udp_send(bt)
 
 
 while True:  # 开始整个代码的大循环
 
     # 检测环境温度、湿度并上报 oled 或者 udp
     temperature_measure(True, True)
-    time.sleep(2)
-    # distance_measurement()
-    # time.sleep(2)
+    time.sleep(1)
 
+    # time.sleep(2)

@@ -7,7 +7,7 @@ net_work_id = '8bd5124fd6e9f450'
 pushkey = 'PDU1TtRhwbxSrMmJ38D4aPOduQdG82WcXOHVa'
 
 get_member_url = 'https://api.zerotier.com/api/v1/network/' + net_work_id + '/member'
-push_message = 'http://push.byzhao.cn:8801/message/push'
+push_message = 'http://192.168.192.36:8801/message/push'
 
 headers = {'Content-Type': 'application/json', 'Authorization': 'token ' + token}
 
@@ -37,4 +37,6 @@ for member in result:
     body = {'text': 'zerotier状态', 'desp': markdown, 'pushkey': pushkey}
     headers = {'Content-Type': 'application/json;charset=utf-8'}
     response = requests.post(push_message, data=json.dumps(body), headers=headers)
-    print(response.text)
+    load_data = json.loads(response.text)
+    print(load_data)
+    print(load_data['code'])

@@ -8,7 +8,7 @@ import urllib
 import time, math  # 声明用到的类库，尤其是dht的类库
 
 # 温湿度传感器data串口
-d = dht.DHT11(machine.Pin(5))  # 声明用到类库中的函数，并设置参数
+d = dht.DHT11(machine.Pin(14))  # 声明用到类库中的函数，并设置参数
 led_blue = machine.PWM(machine.Pin(2), freq=100)
 # 超声波传感器Echo、Trig定义
 Trig = Pin(5, Pin.OUT)

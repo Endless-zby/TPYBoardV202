@@ -1,7 +1,7 @@
 import socket
 import tkinter as tk
 
-UDP_IP = "172.16.192.43"
+UDP_IP = "192.168.123.255"
 UDP_PORT = 5005
 MESSAGE_STOP = "stop"
 MESSAGE_FORWARD = "forward"

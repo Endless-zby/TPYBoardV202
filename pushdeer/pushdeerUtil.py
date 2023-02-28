@@ -87,7 +87,7 @@ class PushDeer:
 
 if __name__ == "__main__":
     pushdeer = PushDeer(pushkey="PDU1TtRhwbxSrMmJ38D4aPOduQdG82WcXOHVa")
-    pushdeer.send_text(method="get", text="hello world", desp="optional description")
+    pushdeer.send_text(method="post", text="hello world", desp="optional description")
     # pushdeer.send_markdown("# hello world", desp="**optional** description in markdown")
     # pushdeer.send_image("https://github.com/easychen/pushdeer/raw/main/doc/image/clipcode.png")
     # pushdeer.send_image("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=")

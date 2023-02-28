@@ -2,9 +2,12 @@
 
 > TPYBoardV202
 > 开发环境：python
-###  1、移动检测（_加速度传感器_）
-###  2、温湿度检测（_温湿度传感器_）
-###  3、距离检测（_超声波传感器_）
+
+### 1、移动检测（_加速度传感器_）
+
+### 2、温湿度检测（_温湿度传感器_）
+
+### 3、距离检测（_超声波传感器_）
 
 |TPYBoard v202|超声波模块（HC-SR04）|
 |-------------|-------------------|
@@ -12,6 +15,7 @@
 |G14| Trig|
 |G15| Echo|
 |GND|Gnd|
+
 - 工作原理
 
 (1) 采用IO口Trig触发测距，给最少10us的高电平信号。
@@ -47,14 +51,19 @@ def distance_measurement():
         distance = (tc * 0.0343) / 2
         print('Distance:', distance, '(cm)')
 ```
+
 - 误差分析
+
 > 超声波的传播速度受空气的密度所影响，空气的密度越高则超声波的传播速度就越快，而空气的密度又与温度有着密切的关系
 
 超声波`速度与温度`的关系近似公式为：_C=C0+0.607×T℃ (C0为零度时的声波速度332m/s)_
 
-###  4、猫砂盆门控制（_舵机_）
-###  5、猫砂自动清筛（_步进电机_、_带减速器电机_、_滑轨_、_皮带_）
-###  6、本地监控显示器（_0.96寸OLED显示屏_）
+### 4、猫砂盆门控制（_舵机_）
+
+### 5、猫砂自动清筛（_步进电机_、_带减速器电机_、_滑轨_、_皮带_）
+
+### 6、本地监控显示器（_0.96寸OLED显示屏_）
+
 > 常用方法
 
 |方法|解释|
@@ -72,29 +81,31 @@ def distance_measurement():
 |framebuf.vline(x,y,w,c)|画垂直直线|
 |framebuf.fill_rect(x,y,w,h,c)|画填充矩形|
 |framebuf.rect(x,y,w,h,c)|画空心矩形|
-###  7、远程状态监控（_Lua或Java或python开发_）
-###  8、无线传输（_板载wifi模块_）
-###  9、远程控制协议（_客户端加密的UDP协议_）
-###  10、减速电机（L298N控制器）  
-> 接线图  
+
+### 7、远程状态监控（_Lua或Java或python开发_）
+
+### 8、无线传输（_板载wifi模块_）
+
+### 9、远程控制协议（_客户端加密的UDP协议_）
+
+### 10、减速电机（L298N控制器）
+
+> 接线图
 
 ![L298N控制器](resource/20210508141229823.png)
-
-
 
 ### ESP8266引脚图
 
 ![ESP8266引脚图](resource/esp8266.png)
 ![ESP8266引脚图](resource/a74078c888a347c2b69f57c4caa0e482.jpg)
 
-
-
 # PushDeer
+
 > `PushDeer`可以将消息推送到各种支持MQTT协议的智能设备。  
 > DeerESP 是 PushDeer 在 IOT 方向的扩展项目，它是一个基于 ESP8266/ESP32 芯片的消息设备方案。  
 > 开发环境：arduino  
 > DIE下载：https://www.arduino.cc/en/software  
-> 1.44TFT资料：http://www.lcdwiki.com/zh/1.44inch_SPI_Arduino_Module_Black_SKU:MAR1442  
+> 1.44TFT资料：http://www.lcdwiki.com/zh/1.44inch_SPI_Arduino_Module_Black_SKU:MAR1442
 
 ### ESP8266与1.44TFT
 
@@ -103,22 +114,17 @@ def distance_measurement():
 ### 开发流程
 
 - 由于我们使用的8266并没有内置到 ardunio IDE 中，我们还需要进行一下配置，在设置界面填上附加开发板管理器网址：
+
 > esp8266 填写这个 https://arduino.esp8266.com/stable/package_esp8266com_index.json  
-> esp32 填写这个 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json  
-
-
-
+> esp32 填写这个 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
 # L298N（红版）
 
-- 电机控制器，连接12V输出的2100mA电池，5V输出可以连接esp8266使用 
-
-
-
+- 电机控制器，连接12V输出的2100mA电池，5V输出可以连接esp8266使用
 
 # 智能小车开发
 
-### 硬件模块  
+### 硬件模块
 
 - 超声传感器，避障，回传位置信息
 - L298N驱动板，驱动四个电机，分压给esp供电
@@ -127,13 +133,49 @@ def distance_measurement():
 - 0.96寸OLED显示屏，间歇显示配网后的ip地址，方便手机发送udp数据包控制小车
 - N20减速电机，连接12V电源，120转速，扭矩比较大，速度慢但是动力强
 - 亚克力板，做小车底板
+- 12V输出的18650电池
 
 ### 软件模块
 
 > 注意：代码越简单越好，尽量不做过度的包装
+
 - pushdeer，及时推送消息到手机，比如配网后的ip地址或者障碍物检测消息主动推送到手机
 - 控制器代码，整个小车的控制代码和操作界面
 
 ### 引脚连接图
 
+1、 电机驱动模块控制
+![电机驱动模块控制](resource/1677140793041.jpg)
 
+2、 电机驱动模块接线
+> 说明：IN1 IN2 IN3 IN4逻辑输出口，其中IN1 IN2 控制一个电机的转动，IN3 IN4 控制另一个电机的转动，只要一个置高 一个置低，就可以让电机转动起来。
+
+![L298N控制器](resource/20210508141229823.png)
+
+<table>
+    <tr>
+        <th>G(GPIO)</th>
+        <th>D(Lable)</th>
+        <th>IN(IN1~4)</th>
+    </tr>
+    <tr>
+        <th>4</th>
+        <th>2</th>
+        <th>IN1</th>
+    </tr>
+    <tr>
+        <th>5</th>
+        <th>1</th>
+        <th>IN2</th>
+    </tr>
+    <tr>
+        <th>12</th>
+        <th>6</th>
+        <th>IN3</th>
+    </tr>
+    <tr>
+        <th>13</th>
+        <th>7</th>
+        <th>IN4</th>
+    </tr>
+</table>

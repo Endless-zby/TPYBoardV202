@@ -3,45 +3,50 @@ import machine
 from machine import Pin
 import network
 
-g4 = Pin(4, Pin.OUT)
-g5 = Pin(5, Pin.OUT)
-g12 = Pin(12, Pin.OUT)
-g13 = Pin(13, Pin.OUT)
+# g4  和  g5 控制`左`边两个电机
+# g12 和 g13 控制`右`边两个电机
+
+# MicroPython ap模式 下默认密码是micropythoN  网关:192.168.4.1
+
+IN1 = Pin(4, Pin.OUT)
+IN2 = Pin(5, Pin.OUT)
+IN3 = Pin(12, Pin.OUT)
+IN4 = Pin(13, Pin.OUT)
 
 
-def Go():
-    g4.value(1)
-    g5.value(0)
-    g12.value(1)
-    g13.value(0)
+def go():
+    IN1.value(1)
+    IN2.value(0)
+    IN3.value(1)
+    IN4.value(0)
 
 
-def Back():
-    g4.value(0)
-    g5.value(1)
-    g12.value(0)
-    g13.value(1)
+def back():
+    IN1.value(0)
+    IN2.value(1)
+    IN3.value(0)
+    IN4.value(1)
 
 
-def Left():
-    g4.value(1)
-    g5.value(0)
-    g12.value(0)
-    g13.value(0)
+def left():
+    IN1.value(0)
+    IN2.value(1)
+    IN3.value(1)
+    IN4.value(0)
 
 
-def Right():
-    g4.value(0)
-    g5.value(0)
-    g12.value(1)
-    g13.value(0)
+def right():
+    IN1.value(1)
+    IN2.value(0)
+    IN3.value(0)
+    IN4.value(1)
 
 
-def Stop():
-    g4.value(0)
-    g5.value(0)
-    g12.value(0)
-    g13.value(0)
+def stop():
+    IN1.value(0)
+    IN2.value(0)
+    IN3.value(0)
+    IN4.value(0)
 
 
 # -----------------------HTTP Server-----------------------#
@@ -63,7 +68,7 @@ while True:
         req += line
     print("Request:")
     req = req.decode('utf-8').split('\r\n')
-    # http header 解析
+    # http 解析
     req_data = req[0].lstrip().rstrip().replace(' ', '').lower()
     print(req_data)
     if req_data.find('favicon.ico') > -1:
@@ -75,17 +80,19 @@ while True:
         value = req_data[index + 4:index + 6].lstrip().rstrip()
         print('car:', value)
         if value == 'go':
-            Go()
+            go()
         elif value == 'ba':
-            Back()
+            back()
         elif value == 'le':
-            Left()
+            left()
         elif value == 'ri':
-            Right()
+            right()
         else:
-            Stop()
+            stop()
     with open("index.html", 'r') as f:
         for line in f:
             cl.send(line)
     # cl.send(response)   #返回html网页的数据
     cl.close()  # 关闭socket
+
+

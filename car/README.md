@@ -55,3 +55,23 @@
 </table>
 
 ![L298N控制器](../resource/20210508141229823.png)
+
+3、 超声传感器接线口
+
+<table>
+    <tr>
+        <th>G(GPIO)</th>
+        <th>D(Lable)</th>
+        <th>IN(IN1~4)</th>
+    </tr>
+    <tr>
+        <th>4</th>
+        <th>2</th>
+        <th>IN1</th>
+    </tr>
+    <tr>
+        <th>5</th>
+        <th>1</th>
+        <th>IN2</th>
+    </tr>
+</table>

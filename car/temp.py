@@ -11,6 +11,7 @@ import uasyncio as asyncio
 # 网络设置
 WIFI_SSID = "zby-2.4"
 WIFI_PASSWORD = "zby123456"
+PUSH_SERVER = "push.byzhao.cn:8801"
 PUSH_KEY = "PDU1TtRhwbxSrMmJ38D4aPOduQdG82WcXOHVa"
 UDP_PORT = 5005  # UDP服务器端口号
 
@@ -21,7 +22,7 @@ wlan.active(True)  # 打开网络连接
 
 
 def send_pusher(text, desp):
-    urltxt = "http://push.byzhao.cn:8801/message/push?pushkey={}&text={}&desp={}".format(PUSH_KEY, text, desp)
+    urltxt = "http://{}/message/push?pushkey={}&text={}&desp={}".format(PUSH_SERVER, PUSH_KEY, text, desp)
     return requests.get(url=urltxt)
 
 
@@ -42,11 +43,11 @@ send_pusher('小车已上线', 'ip: ' + wlan.ifconfig()[0])
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((wlan.ifconfig()[0], UDP_PORT))
 
-
-IN1 = Pin(4, Pin.OUT)
-IN2 = Pin(5, Pin.OUT)
-IN3 = Pin(12, Pin.OUT)
-IN4 = Pin(13, Pin.OUT)
+# 电机驱动板
+IN1 = Pin(4, Pin.OUT)  # 左前
+IN2 = Pin(5, Pin.OUT)  # 左后
+IN3 = Pin(12, Pin.OUT)  # 右前
+IN4 = Pin(13, Pin.OUT)  # 右后
 
 
 def go():

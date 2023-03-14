@@ -53,7 +53,7 @@ def send_pusher(text, desp):
     body = {'text': text, 'desp': desp, 'pushkey': PUSH_KEY}
     headers = {'Content-Type': 'application/json;charset=utf-8'}
     urltxt = "http://192.168.123.36:8801/message/push?pushkey={}&text={}&desp={}".format(PUSH_KEY, text, desp)
-    response = urequests.post('http://192.168.123.36:8801/message/push',data=ujson.dumps(body),headers=headers)
+    response = urequests.post('http://192.168.123.36:8801/message/push', data=ujson.dumps(body), headers=headers)
     print('push:', urltxt)
     print(response)
     print(response.text)
@@ -129,16 +129,38 @@ def stop():
     IN4.value(0)
 
 
+# 当前小车的运动模式  默认是手动控制
+auto_mode = False
+
 while True:
+    # 切换【自动控制】模式
     data, addr = sock.recvfrom(1024)
     data_str = data.decode("utf-8")
-    if data_str == 'forward':
-        go()
-    elif data_str == 'backward':
-        back()
-    elif data_str == 'left':
-        left()
-    elif data_str == 'right':
-        right()
+    if len(data_str) > 0 & data_str == 'controller':
+        global auto_mode
+        auto_mode = ~auto_mode
+
+    if auto_mode:
+        # 当前是【自动控制】模式
+        # 设置舵机方向为90°
+        sg90(90)
+        # 读取前方障碍物距离
+
     else:
-        stop()
+        # 当前是【手动控制】模式
+        if data_str == 'forward':
+            go()
+        elif data_str == 'backward':
+            back()
+        elif data_str == 'left':
+            left()
+        elif data_str == 'right':
+            right()
+        else:
+            stop()
+
+
+
+
+
+

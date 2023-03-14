@@ -15,6 +15,12 @@ IN2 = Pin(5, Pin.OUT)  # D1
 IN3 = Pin(12, Pin.OUT)  # D6
 IN4 = Pin(13, Pin.OUT)  # D7
 
+# 超声波传感器Echo、Trig定义
+Trig = Pin(2, Pin.OUT)  # D4
+Echo = Pin(0, Pin.IN)  # D3
+
+servo = machine.PWM(machine.Pin(14), freq=50)  # D5
+
 # i2c = I2C(scl=Pin(15), sda=Pin(14))
 # i2c = I2C(scl=Pin(5), sda=Pin(4))
 # oled = SSD1306_I2C(128, 64, i2c)
@@ -51,6 +57,16 @@ def send_pusher(text, desp):
     print('push:', urltxt)
     print(response)
     print(response.text)
+
+
+def sg90(du):
+    t1 = 0.5 + 2 / 180 * du  # 范围2ms 角度180度 起始0.5ms
+    pulse = int(t1 / 20 * 1023)
+    print('移动的角度:', du, pulse)
+
+    # servo.duty(77)
+    servo.duty(pulse)  # 舵机角度的设定
+    print('eg:', pulse)
 
 
 # 网络连接

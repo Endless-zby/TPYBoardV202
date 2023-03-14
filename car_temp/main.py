@@ -5,7 +5,7 @@ from ssd1306 import SSD1306_I2C
 import network
 from machine import Pin, I2C
 import uasyncio as asyncio
-import ujson
+import ujson,time
 
 # g4  和  g5 控制`左`边两个电机
 # g12 和 g13 控制`右`边两个电机
@@ -16,8 +16,8 @@ IN3 = Pin(12, Pin.OUT)  # D6
 IN4 = Pin(13, Pin.OUT)  # D7
 
 # 超声波传感器Echo、Trig定义
-Trig = Pin(2, Pin.OUT)  # D4
-Echo = Pin(0, Pin.IN)  # D3
+# Echo = Pin(15, Pin.OUT)  # D8
+# Trig = Pin(3, Pin.IN)  # RX
 
 servo = machine.PWM(machine.Pin(14), freq=50)  # D5
 
@@ -59,6 +59,33 @@ def send_pusher(text, desp):
     print(response.text)
 
 
+# def distance_measurement():
+#     # 高电平发送方波 持续20us
+#     Trig.value(1)
+#     time.sleep_us(20)
+#     Trig.value(0)
+#     # 侦听Echo串口有无输入高电平 没有的话接着发送方波
+#     while Echo.value() == 0:
+#         Trig.value(1)
+#         time.sleep_us(20)
+#         Trig.value(0)
+#     # 侦听到Echo电平升高
+#     if Echo.value() == 1:
+#         # 记录当前时间
+#         ts = time.ticks_us()
+#
+#         while Echo.value() == 1:
+#             pass
+#         te = time.ticks_us()
+#         print('te:{}, ts:{}', te, ts)
+#         # 计算得到高电平持续时间 单位：us
+#         tc = te - ts
+#         # 根据音速计算距离（换算cm）  0.0343厘米/微秒
+#         distance = (tc * 0.0343) / 2
+#         print('Distance:', distance, '(cm)')
+#         # oled_show([('measurement: ' + distance, 0, 20)])
+
+
 def sg90(du):
     t1 = 0.5 + 2 / 180 * du  # 范围2ms 角度180度 起始0.5ms
     pulse = int(t1 / 20 * 1023)
@@ -88,9 +115,12 @@ send_pusher('online', 'ip: ' + wlan.ifconfig()[0])
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((wlan.ifconfig()[0], UDP_PORT))
 
+sg90(90)
+
 
 def go():
     print('go')
+    sg90(90)
     IN1.value(1)
     IN2.value(0)
     IN3.value(1)
@@ -99,6 +129,7 @@ def go():
 
 def back():
     print('back')
+    sg90(45)
     IN1.value(0)
     IN2.value(1)
     IN3.value(0)
@@ -107,6 +138,7 @@ def back():
 
 def left():
     print('left')
+    sg90(180)
     IN1.value(0)
     IN2.value(1)
     IN3.value(1)
@@ -115,6 +147,7 @@ def left():
 
 def right():
     print('right')
+    sg90(0)
     IN1.value(1)
     IN2.value(0)
     IN3.value(0)
@@ -132,6 +165,7 @@ def stop():
 while True:
     data, addr = sock.recvfrom(1024)
     data_str = data.decode("utf-8")
+    print('stop')
     if data_str == 'forward':
         go()
     elif data_str == 'backward':

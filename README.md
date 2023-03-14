@@ -3,6 +3,19 @@
 > TPYBoardV202
 > 开发环境：python
 
+# 刷入MicroPython固件
+
+下载固件https://micropython.org/download/esp8266/
+
+```shell
+esptool.py --port COM9 erase_flash
+```
+
+```shell
+esptool.py --port COM9 --baud 460800 write_flash --flash_size=detect 0 D:\MicroPython开发板\TPYBoardv202资料\TPYBoardv202资料\固件和烧写工具\esp8266-20220618-v1.19.1.bin --verify
+```
+
+
 ### 1、移动检测（_加速度传感器_）
 
 ### 2、温湿度检测（_温湿度传感器_）

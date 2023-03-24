@@ -40,16 +40,16 @@ wlan.active(True)  # 打开网络连接
 
 
 # oled显示函数
-# def oled_show(key):
-#     oled.fill(0)  # 清屏
-#     # print(len(key))
-#     for ss in key:
-#         # print(ss)
-#         ele = ss[0]
-#         x = ss[1]
-#         y = ss[2]
-#         oled.text(ele, x, y)
-#     oled.show()
+def oled_show(key):
+    oled.fill(0)  # 清屏
+    # print(len(key))
+    for ss in key:
+        # print(ss)
+        ele = ss[0]
+        x = ss[1]
+        y = ss[2]
+        oled.text(ele, x, y)
+    oled.show()
 
 
 def send_pusher(text, desp):
@@ -74,13 +74,13 @@ def sg90(du):
 
 # 网络连接
 def do_connect():  # 定义开发板连接无线网络的函数
-    # oled_show([('Net connection...', 0, 20)])
+    oled_show([('Net connection...', 0, 20)])
     if not wlan.isconnected():  # 判断是否有网络连接
         print('connecting to network...')
         wlan.connect(WIFI_SSID, WIFI_PASSWORD)  # 设置想要连接的无线名称和密码
         while not wlan.isconnected():  # 等待连接上无线网络
             pass
-        # oled_show([('ip: ', 0, 20), (wlan.ifconfig()[0], 0, 40)])
+        oled_show([('ip: ', 0, 20), (wlan.ifconfig()[0], 0, 40)])
     print('network config:', wlan.ifconfig())
 
 

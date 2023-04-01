@@ -10,10 +10,16 @@ import ujson,time
 # g4  和  g5 控制`左`边两个电机
 # g12 和 g13 控制`右`边两个电机
 
-IN1 = Pin(4, Pin.OUT)  # D2
-IN2 = Pin(5, Pin.OUT)  # D1
-IN3 = Pin(12, Pin.OUT)  # D6
-IN4 = Pin(13, Pin.OUT)  # D7
+# IN1 = Pin(4, Pin.OUT)  # D2
+# IN2 = Pin(5, Pin.OUT)  # D1
+# IN3 = Pin(12, Pin.OUT)  # D6
+# IN4 = Pin(13, Pin.OUT)  # D7
+
+IN1 = Pin(13, Pin.OUT)  # D13
+IN2 = Pin(12, Pin.OUT)  # D12
+IN3 = Pin(33, Pin.OUT)  # D14
+IN4 = Pin(32, Pin.OUT)  # D27
+
 
 # 超声波传感器Echo、Trig定义
 # Echo = Pin(15, Pin.OUT)  # D8
@@ -115,43 +121,58 @@ send_pusher('online', 'ip: ' + wlan.ifconfig()[0])
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((wlan.ifconfig()[0], UDP_PORT))
 
-sg90(90)
+# sg90(90)
 
 
-def go():
+def go(millis):
     print('go')
-    sg90(90)
     IN1.value(1)
     IN2.value(0)
     IN3.value(1)
     IN4.value(0)
+    if millis != -1:
+        print('go---')
+        time.sleep(millis)  # 延时
+        stop()
 
 
-def back():
+def back(millis):
     print('back')
-    sg90(45)
     IN1.value(0)
     IN2.value(1)
     IN3.value(0)
     IN4.value(1)
+    if millis != -1:
+        time.sleep(millis)  # 延时
+        stop()
+    else:
+        pass
 
 
-def left():
+def left(millis):
     print('left')
-    sg90(180)
     IN1.value(0)
     IN2.value(1)
     IN3.value(1)
     IN4.value(0)
+    if millis != -1:
+        time.sleep(millis)  # 延时
+        stop()
+    else:
+        pass
 
 
-def right():
+def right(millis):
     print('right')
-    sg90(0)
     IN1.value(1)
     IN2.value(0)
     IN3.value(0)
     IN4.value(1)
+    if millis != -1:
+        time.sleep(millis)  # 延时
+        stop()
+    else:
+        pass
 
 
 def stop():
@@ -163,16 +184,17 @@ def stop():
 
 
 while True:
-    data, addr = sock.recvfrom(1024)
-    data_str = data.decode("utf-8")
-    print('stop')
-    if data_str == 'forward':
-        go()
-    elif data_str == 'backward':
-        back()
-    elif data_str == 'left':
-        left()
-    elif data_str == 'right':
-        right()
-    else:
-        stop()
+    # data, addr = sock.recvfrom(1024)
+    # data_str = data.decode("utf-8")
+    # if data_str == 'forward':
+    #     go()
+    # elif data_str == 'backward':
+    #     back()
+    # elif data_str == 'left':
+    #     left()
+    # elif data_str == 'right':
+    #     right()
+    # else:
+    #     stop()
+    go(3)
+    time.sleep(1)

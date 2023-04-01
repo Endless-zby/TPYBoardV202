@@ -45,7 +45,11 @@ def distance_measurement():
         # 根据音速计算距离（换算cm）  0.0343厘米/微秒
         distance = (tc * 0.0343) / 2
         print('Distance:', distance, '(cm)')
-        # oled_show([('measurement: ' + distance, 0, 20)])
+        oled_show([(('Distance:' + str(int(distance))), 0, 20)])
+        if distance < 40:
+            sg90(90)
+        else:
+            sg90(180)
 
 
 # oled显示函数
@@ -87,6 +91,6 @@ def temperature_measure(show_oled):
 while True:  # 开始整个代码的大循环
 
     # 检测环境温度、湿度并上报 oled 或者 udp
-    temperature_measure(True)
+    # temperature_measure(True)
     distance_measurement()
     time.sleep(2)

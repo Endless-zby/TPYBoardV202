@@ -1,3 +1,6 @@
+
+# 此main是测试超声波传感器、温湿度传感器、oled、舵机的一个综合demo实例
+
 import dht
 import machine
 import ssd1306

@@ -17,10 +17,13 @@ import ujson
 # 电机驱动芯片
 # g13  和  g12 控制`左`边两个电机
 # g14 和 g27 控制`右`边两个电机
-IN1 = Pin(13, Pin.OUT)  # D13
-IN2 = Pin(12, Pin.OUT)  # D12
-IN3 = Pin(33, Pin.OUT)  # D14
-IN4 = Pin(32, Pin.OUT)  # D27
+# IN1 = Pin(13, Pin.OUT)  # D13
+# IN2 = Pin(12, Pin.OUT)  # D12
+IN1 = Pin(27, Pin.OUT)  # D27
+IN2 = Pin(26, Pin.OUT)  # D26
+IN3 = Pin(33, Pin.OUT)  # D33
+IN4 = Pin(32, Pin.OUT)  # D32
+
 
 # 超声波传感器Echo、Trig定义
 Trig = Pin(15, Pin.OUT)  # D15
@@ -93,6 +96,9 @@ def oled_show(key):
     oled.show()
 
 
+oled_show([('car start...', 0, 20)])
+
+
 # 推送关键消息到手机， 例如系统上线、障碍物卡死、设备ip地址、ap模式下的设备接入情况，以及其他必要信息
 def send_pusher(text, desp):
     body = {'text': text, 'desp': desp, 'pushkey': PUSH_KEY}
@@ -123,8 +129,6 @@ def temperature_measure(show_oled):
     if show_oled:
         # 测量数据oled显示
         oled_show([('temperature: ' + temp_, 0, 10), ('humidity: ' + hum_ + '%', 0, 30), ('dataBy: byzhao', 17, 50)])
-    if d.humidity() < 180:
-        sg90(int(d.humidity()))
 
 
 # 网络连接
@@ -160,6 +164,11 @@ def go(millis):
         print('go---')
         time.sleep(millis)  # 延时
         stop()
+    else:
+        pass
+
+
+sg90(90)
 
 
 def back(millis):
@@ -210,37 +219,36 @@ def stop():
 
 
 # 当前运动模式  默认是手动控制
-auto_mode = True
+auto_mode = False
 
 while True:
     # 切换【自动控制】模式
-    # data, addr = sock.recvfrom(1024)
-    # data_str = data.decode("utf-8")
+    data, addr = sock.recvfrom(1024)
+    data_str = data.decode("utf-8")
     # if len(data_str) > 0 & data_str == 'controller':
     #     global auto_mode
     #     auto_mode = ~auto_mode
 
-    go(-1)
+    # go(-1)
 
     if auto_mode:
         # 当前是【自动控制】模式
-        go(-1)
         # 设置舵机方向为90°
-        print(3)
+
         # 读取前方障碍物距离
         distance = distance_measurement()
         # 当距离小于20cm时停止
-        if distance < 20:
+        if distance < 10:
             stop()
             sg90(90)
             distance_list = []
             # 从0°到180°角度检测距离前方障碍物的距离 10°取一次数据
-            for jiaodu in range(0, 190, 10):
+            for jiaodu in range(0, 180, 10):
                 print(jiaodu)
                 sg90(jiaodu)
                 distance = distance_measurement()
                 distance_list.append(distance)
-                time.sleep(1)
+                time.sleep(0.5)
             # 收集完成18组方向距离数据 恢复舵机初始方向
             print(distance_list)
             # 计算当前位置右侧十八组数据
@@ -259,19 +267,15 @@ while True:
             pass
         sg90(90)
         time.sleep(1)
-
-
-
-
-    # else:
-    #     # 当前是【手动控制】模式
-    #     if data_str == 'forward':
-    #         go(-1)
-    #     elif data_str == 'backward':
-    #         back(-1)
-    #     elif data_str == 'left':
-    #         left(-1)
-    #     elif data_str == 'right':
-    #         right(-1)
-    #     else:
-    #         stop()
+    else:
+        # 当前是【手动控制】模式
+        if data_str == 'forward':
+            go(-1)
+        elif data_str == 'backward':
+            back(-1)
+        elif data_str == 'left':
+            left(-1)
+        elif data_str == 'right':
+            right(-1)
+        else:
+            stop()

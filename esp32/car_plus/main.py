@@ -24,7 +24,6 @@ IN2 = Pin(26, Pin.OUT)  # D26
 IN3 = Pin(33, Pin.OUT)  # D33
 IN4 = Pin(32, Pin.OUT)  # D32
 
-
 # 超声波传感器Echo、Trig定义
 Trig = Pin(15, Pin.OUT)  # D15
 Echo = Pin(2, Pin.IN)  # D2
@@ -45,6 +44,7 @@ oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
 WIFI_SSID = "blog-2.4"
 WIFI_PASSWORD = "zby123456"
 PUSH_KEY = "PDU1TgQHPSWCR6tuX5UZJr1Lgs4gXT2yrKJTE"
+BARK_URL = "http://192.168.123.208:8081/wuaFrBQHBvF25bbPEt69Mg/{}/{}"
 UDP_PORT = 5005  # UDP服务器端口号
 
 # 设置网络模式
@@ -109,6 +109,11 @@ def send_pusher(text, desp):
     print(response.text)
 
 
+def send_bark(text, desp):
+    urltxt = BARK_URL.format(text, desp)
+    urequests.get(url=urltxt)
+
+
 # pwm控制舵机转向角度，通过计算控制一个周期内的空占比来使舵机转动指定的角度
 def sg90(du):
     t1 = 0.5 + 2 / 180 * du  # 范围2ms 角度180度 起始0.5ms
@@ -147,7 +152,11 @@ def do_connect():  # 定义开发板连接无线网络的函数
 do_connect()
 
 # 发送当前设备ip地址
-send_pusher('online', 'ip: ' + wlan.ifconfig()[0])
+# send_pusher('online', 'ip: ' + wlan.ifconfig()[0])
+try:
+    send_bark('online', 'ip: ' + wlan.ifconfig()[0])
+except:
+    pass
 # 初始化UDP连接
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((wlan.ifconfig()[0], UDP_PORT))
